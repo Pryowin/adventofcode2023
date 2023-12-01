@@ -1,10 +1,18 @@
 use day01;
-use std::env::args;
+use std::{env::args, fmt::Error};
 
 const DIGITS: [&str; 10] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const DIGITS_AS_TEXT: [&str; 10] = [
     "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
+
+struct DigitsInString {
+    first_digit: usize,
+    last_digit: usize,
+    first_location: usize,
+    last_location: usize,
+}
+
 fn main() {
     let args: Vec<String> = args().collect();
 
@@ -44,80 +52,44 @@ fn calibration_value(line: String) -> usize {
     value
 }
 fn calibration_value_b(line: String) -> usize {
-    let mut first_digit: usize = 0;
-    let mut last_digit: usize = 0;
-    let mut first_location: usize = line.len();
-    let mut last_location: usize = 0;
+    let mut calibration = DigitsInString {
+        first_digit: 0,
+        last_digit: 0,
+        first_location: line.len(),
+        last_location: 0,
+    };
 
     for i in 0..=9 {
         let result = line.find(DIGITS[i]);
-        match result {
-            Some(x) => {
-                /* println!(
-                    "1st loc {}, first digit {}, last loc {}, last_digit {}, x={}, i={}",
-                    first_location, first_digit, last_location, last_digit, x, i
-                ); */
-                if x < first_location {
-                    first_location = x;
-                    first_digit = i;
-                }
-                if x >= last_location {
-                    last_location = x;
-                    last_digit = i;
-                }
-            }
-            _ => (),
-        }
+        calibration = find_digit(calibration, result, i);
+
         let result = line.rfind(DIGITS[i]);
-        match result {
-            Some(x) => {
-                /* println!(
-                    "1st loc {}, first digit {}, last loc {}, last_digit {}, x={}, i={}",
-                    first_location, first_digit, last_location, last_digit, x, i
-                ); */
-                if x < first_location {
-                    first_location = x;
-                    first_digit = i;
-                }
-                if x >= last_location {
-                    last_location = x;
-                    last_digit = i;
-                }
-            }
-            _ => (),
-        }
+        calibration = find_digit(calibration, result, i);
     }
     for i in 0..=9 {
         let result = line.find(DIGITS_AS_TEXT[i]);
-        match result {
-            Some(x) => {
-                if x < first_location {
-                    first_location = x;
-                    first_digit = i;
-                }
-                if x >= last_location {
-                    last_location = x;
-                    last_digit = i;
-                }
-            }
-            _ => (),
-        }
+        calibration = find_digit(calibration, result, i);
+
         let result = line.rfind(DIGITS_AS_TEXT[i]);
-        match result {
-            Some(x) => {
-                if x < first_location {
-                    first_location = x;
-                    first_digit = i;
-                }
-                if x >= last_location {
-                    last_location = x;
-                    last_digit = i;
-                }
-            }
-            _ => (),
-        }
+        calibration = find_digit(calibration, result, i);
     }
     // println!("{} : {} & {}", line, first_digit, last_digit);
-    let value = first_digit * 10 + last_digit;
+    let value = calibration.first_digit * 10 + calibration.last_digit;
     value
+}
+fn find_digit(mut calibration: DigitsInString, result: Option<usize>, i: usize) -> DigitsInString {
+    match result {
+        Some(x) => {
+            if x < calibration.first_location {
+                calibration.first_location = x;
+                calibration.first_digit = i;
+            }
+            if x >= calibration.last_location {
+                calibration.last_location = x;
+                calibration.last_digit = i;
+            }
+        }
+        _ => (),
+    }
+    calibration
 }
