@@ -1,5 +1,5 @@
 use day01;
-use std::{env::args, fmt::Error};
+use std::env::args;
 
 const DIGITS: [&str; 10] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const DIGITS_AS_TEXT: [&str; 10] = [
@@ -21,37 +21,16 @@ fn main() {
     let mut sum = 0;
     for line in input {
         if args[1] == "A".to_string() {
-            sum += calibration_value(line)
+            sum += calibration_value(line, false)
         } else {
-            sum += calibration_value_b(line)
+            sum += calibration_value(line, true)
         }
     }
 
     println!("Calibration total is {}", sum);
 }
 
-fn calibration_value(line: String) -> usize {
-    let mut is_first_digit_found = false;
-    let mut value: usize = 0;
-    let mut last_digit: usize = 0;
-
-    for chr in line.chars() {
-        if !is_first_digit_found {
-            if chr.is_digit(10) {
-                is_first_digit_found = true;
-                last_digit = chr.to_digit(10).unwrap() as usize;
-                value = 10 * last_digit;
-            }
-        } else {
-            if chr.is_digit(10) {
-                last_digit = chr.to_digit(10).unwrap() as usize;
-            }
-        }
-    }
-    value += last_digit;
-    value
-}
-fn calibration_value_b(line: String) -> usize {
+fn calibration_value(line: String, part_b: bool) -> usize {
     let mut calibration = DigitsInString {
         first_digit: 0,
         last_digit: 0,
@@ -66,14 +45,15 @@ fn calibration_value_b(line: String) -> usize {
         let result = line.rfind(DIGITS[i]);
         calibration = find_digit(calibration, result, i);
     }
-    for i in 0..=9 {
-        let result = line.find(DIGITS_AS_TEXT[i]);
-        calibration = find_digit(calibration, result, i);
+    if part_b {
+        for i in 0..=9 {
+            let result = line.find(DIGITS_AS_TEXT[i]);
+            calibration = find_digit(calibration, result, i);
 
-        let result = line.rfind(DIGITS_AS_TEXT[i]);
-        calibration = find_digit(calibration, result, i);
+            let result = line.rfind(DIGITS_AS_TEXT[i]);
+            calibration = find_digit(calibration, result, i);
+        }
     }
-    // println!("{} : {} & {}", line, first_digit, last_digit);
     let value = calibration.first_digit * 10 + calibration.last_digit;
     value
 }
