@@ -1,4 +1,5 @@
 use day02;
+use std::cmp;
 use std::env::args;
 
 const RED: u32 = 12;
@@ -36,8 +37,14 @@ fn main() {
     let run_type = &args[1];
     let input = day02::read_file(args[2].as_str());
 
-    let mut answer: u32 = 0;
-
+    if run_type == "A" {
+        println!("Answer is {}", part_one(input));
+    } else {
+        println!("Answer is {}", part_two(input));
+    }
+}
+fn part_one(input: Vec<String>) -> u32 {
+    let mut answer = 0;
     let elf_question = Balls {
         red: RED,
         blue: BLUE,
@@ -50,8 +57,33 @@ fn main() {
             answer += game;
         }
     }
-    println!("Answer is {}", answer);
+    answer
 }
+fn part_two(input: Vec<String>) -> u32 {
+    let mut answer = 0;
+    for line in input {
+        let balls = get_max(&line);
+        answer += balls.red * balls.blue * balls.green;
+    }
+    answer
+}
+fn get_max(line: &str) -> Balls {
+    let mut max_balls = Balls {
+        red: 0,
+        blue: 0,
+        green: 0,
+    };
+
+    let balls = get_balls(&line);
+
+    for grab in balls {
+        max_balls.red = cmp::max(max_balls.red, grab.red);
+        max_balls.green = cmp::max(max_balls.green, grab.green);
+        max_balls.blue = cmp::max(max_balls.blue, grab.blue);
+    }
+    max_balls
+}
+
 fn is_game_possible(line: &str, elf_question: &Balls) -> bool {
     let game = get_balls(line);
 
