@@ -1,23 +1,7 @@
 import sys
-from os.path import exists
 
-def read_input(file_name):
-    with open(file_name, 'r') as file:
-        data = file.readlines()
-    return data 
-
-def is_args_valid() -> bool:
-    if len(sys.argv) < 3:
-        print("Must specify run type and input file")
-        return False
-    if "AB".find(sys.argv[1]) < 0:
-        print("First parameter is the run type and must be 'A' or 'B")
-        return False
-    if not exists(sys.argv[2]):
-        print(f"File {sys.argv[2]} does not exist")
-        return False
-    
-    return True
+sys.path.append( '../python_modules' )
+import advent
 
 def process_input(data, run_type) -> int:
     answer = 0
@@ -86,11 +70,11 @@ def process_card(scores, card)->int:
             answer += process_card(scores, i)
     return answer
         
-if not is_args_valid():
+if not advent.is_args_valid(sys.argv):
     print("Unrecoverable error - terminating program")
     sys.exit()
 
-data = read_input(sys.argv[2])
+data = advent.read_input(sys.argv[2])
 answer = process_input(data, sys.argv[1])
 print(f"Answer : {answer}")
 
