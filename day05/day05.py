@@ -15,7 +15,12 @@ MAP = ["seed-to-soil",
 def process_input(data,run_type) ->int:
     seeds = read_first_line(data[0])
     maps = read_other_lines(data[1:])
-    answer = process_seeds_into_maps(seeds, maps)
+    if run_type == "A":
+        answer = process_seeds_into_maps(seeds, maps)
+    else:
+        seed_range = get_seed_ranges(seeds)
+        answer = process_seeds_into_maps(seed_range, maps)
+
     return answer
 
 def read_first_line(line):
@@ -82,7 +87,15 @@ def process_seeds_into_maps(seeds, maps):
 
     return min_value
 
-    
+def get_seed_ranges(seeds):
+    idx=0
+    seed_ranges =[]
+    while idx < len(seeds):
+        for i in range(seeds[idx], seeds[idx]+seeds[idx+1]):
+            seed_ranges.append(i)
+        idx +=2
+    return seed_ranges
+
 
 if __name__ == '__main__':
     if not advent.is_args_valid(sys.argv):
