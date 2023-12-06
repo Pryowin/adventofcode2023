@@ -14,3 +14,6 @@ def test_distance_hold_for_time():
 
 def test_winning_options():
     assert day06.winning_options(7,9,"A") == 4
+
+def test_get_data_b():
+    assert day06.get_data_b("Distance:  9  40  200") == [940200]

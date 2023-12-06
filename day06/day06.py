@@ -4,9 +4,14 @@ sys.path.append( '../python_modules' )
 import advent
 
 def process_input(data, run_type) -> int:
-    times = get_data(data[0])
-    distances = get_data(data[1])
-    return process_each_race(times, distances, run_type)
+    if run_type == "A":
+        times = get_data(data[0])
+        distances = get_data(data[1])
+    else:
+        times = get_data_b(data[0])
+        distances = get_data_b(data[1])
+
+    return process_each_race(times, distances)
 
 def get_data(line):
     ret_array = []
@@ -19,13 +24,21 @@ def get_data(line):
     ret_array.append(int(line))
     return ret_array
 
-def process_each_race(times, distances, run_type):
+def get_data_b(line):
+    ret_array = []
+    start = line.find(":")+1
+    line = line[start:]
+    num = line.replace(" ","")
+    ret_array.append(int(num))
+    return ret_array
+
+def process_each_race(times, distances):
     answer = 1
     for i in range(0,len(times)):
-        answer = answer * winning_options(times[i],distances[i],run_type)
+        answer = answer * winning_options(times[i],distances[i])
     return answer
 
-def winning_options(time_of_race,best_distance,run_type):
+def winning_options(time_of_race,best_distance):
     answer = 0
     for time_held_down in range(0,time_of_race):
         if travel_distance(time_of_race,time_held_down) > best_distance:
