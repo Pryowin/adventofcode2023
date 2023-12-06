@@ -17,3 +17,18 @@ def is_args_valid(params) -> bool:
         return False
     
     return True
+
+# takes a string of data (line), a start position, and an optional separator
+# returns an array of integers
+
+def get_numbers(line,start, separator = " "):
+    ret_array = []
+    line = line[start:].strip()
+    
+    while line.find(separator) > 0:
+        end=line.find(separator)
+        ret_array.append(int(line[:end]))
+        line=line[end+1:].strip()
+    
+    ret_array.append(int(line))
+    return ret_array

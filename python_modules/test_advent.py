@@ -16,3 +16,9 @@ def test_is_args_valid_wrong_type(capsys):
 def test_is_args_valid_missing_file(capsys):
     assert advent.is_args_valid(["pgmname", "B", "missing.py"]) == False
     assert capsys.readouterr().out == "File missing.py does not exist\n"
+
+def test_get_numbers_default_separator():
+    assert advent.get_numbers("Time:      7  15   30",5) == [7,15,30]
+
+def test_get_numbers_comma_separator():
+    assert advent.get_numbers("Time:      7,15,30",5,",") == [7,15,30]
