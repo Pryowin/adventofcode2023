@@ -14,15 +14,7 @@ def process_input(data, run_type) -> int:
     return process_each_race(times, distances)
 
 def get_data(line):
-    ret_array = []
-    start = line.find(":")+1
-    line = line[start:].strip()
-    while line.find(" ") > 0:
-        end=line.find(" ")
-        ret_array.append(int(line[:end]))
-        line=line[end:].strip()
-    ret_array.append(int(line))
-    return ret_array
+    return advent.get_numbers(line, line.find(":")+1)
 
 def get_data_b(line):
     ret_array = []
