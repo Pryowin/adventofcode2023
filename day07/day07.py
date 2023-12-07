@@ -12,6 +12,14 @@ CARD_VALUE = {
     "T": "10"
 }
 
+CARD_VALUE_B = {
+    "A": "14",
+    "K": "13",
+    "Q": "12",
+    "J": "01",
+    "T": "10"
+}
+
 SCORES = ["High Card","One Pair", "Two Pairs", "Three of a Kind", "Full House", "Four of a Kind", "Five of a Kind"]
 
 
@@ -28,8 +36,11 @@ def process_input(data, run_type) -> int:
     for line in data:
         hand = get_hand(line)
         bid = get_bid(line)
-        converted_hand = convert_values(hand)
-        hand_dict = make_hand_dict(hand)
+        if run_type == "B":
+            converted_hand = convert_values(hand, CARD_VALUE_B)
+        else:
+            converted_hand = convert_values(hand)
+        hand_dict = make_hand_dict(hand,run_type)
         rank  = score_hand(hand_dict)
         hands.append(Hand(hand, converted_hand,bid,rank))
     
@@ -42,23 +53,44 @@ def get_hand(line) ->str:
 def get_bid(line) -> str:
     return int(line[6:])
 
-def convert_values(hand) -> str:
+def convert_values(hand, card_value=CARD_VALUE) -> str:
     ret_val = ""
     for char in hand:
-        if char in CARD_VALUE:
-            ret_val += CARD_VALUE[char]
+        if char in card_value:
+            ret_val += card_value[char]
         else:
             ret_val += "0" + char
     return ret_val
 
-def make_hand_dict(hand) -> dict:
+def make_hand_dict(hand,run_type) -> dict:
     hand_check = {}
+    joker_count = 0
     for char in hand:
-        if char in hand_check:
-            hand_check[char] = hand_check[char] + 1
+        if char == "J" and run_type == "B":
+            joker_count += 1 
         else:
-            hand_check[char] = 1
+            if char in hand_check:
+                hand_check[char] = hand_check[char] + 1
+            else:
+                hand_check[char] = 1
+    
+    if run_type == "B":                
+        hand_check = score_jokers(hand_check,joker_count)
+
     return hand_check
+
+def score_jokers(hand_dict, joker_count):
+    if joker_count == 5:
+        return {"J":5}
+    max_card = ""
+    max_count = 0
+    for card in hand_dict:
+        if hand_dict[card] > max_count:
+            max_count = hand_dict[card]
+            max_card = card
+    hand_dict[max_card] += joker_count
+    return hand_dict
+
 
 def score_hand(hand_dict) -> int:
     is_five = False
