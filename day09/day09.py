@@ -7,7 +7,7 @@ def process_input(data, run_type) -> int:
     oasis = get_oasis(data)
     answer = 0
     for list in oasis:
-        answer += make_predictions(get_sequences(list))
+        answer += make_predictions(get_sequences(list),run_type)
     
     return answer
 
@@ -36,13 +36,16 @@ def get_sequences(num_list):
     
     return sequences
 
-def make_predictions(num_list) -> int:
+def make_predictions(num_list,run_type) -> int:
     idx = len(num_list)
     num = 0
     while idx > 0:
         idx -= 1
-        num += num_list[idx][-1]
-    
+        if run_type == "A":
+            num += num_list[idx][-1]
+        else:
+            num = num_list[idx][0] - num
+            
     return num 
 
 if __name__ == '__main__':

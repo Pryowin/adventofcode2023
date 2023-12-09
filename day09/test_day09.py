@@ -22,4 +22,8 @@ def test_get_sequences():
     
 def test_make_predictions():
     seq = day09.get_sequences([0, 3, 6, 9, 12, 15])
-    assert day09.make_predictions(seq) == 18
+    assert day09.make_predictions(seq,"A") == 18
+
+def test_make_predictions_b():
+    seq = day09.get_sequences([10,13,16,21,30,45])
+    assert day09.make_predictions(seq,"B") == 5
