@@ -4,24 +4,23 @@ sys.path.append( '../python_modules' )
 import advent
 
 def process_input(data, run_type) -> int:
-    with_inserted_rows = insert_rows(data)
-    with_inserted_columns = insert_columns(with_inserted_rows)
-    galaxies = get_galaxies(with_inserted_columns)
+    inserted_rows = insert_rows(data)
+    inserted_columns = insert_columns(data)
+    galaxies = get_galaxies(data,inserted_rows,inserted_columns,run_type)
     answer = sum_shortest_paths(galaxies)
     return answer
 
 
-def insert_rows(data) -> list[str]:
+def insert_rows(data) -> list[int]:
     ret_val = []
     for idx, line in enumerate(data):
-        ret_val.append(line)
         if line.find("#") == -1:
-            ret_val.append(line)
+            ret_val.append(idx)
+            
     return ret_val
 
-def insert_columns(data) -> list[str]:
+def insert_columns(data) -> list[int]:
     empty_columns = []
-    ret_val = []
     for idx in range(0,len(data[0])): 
         empty =  True
         for line in data:
@@ -30,25 +29,36 @@ def insert_columns(data) -> list[str]:
                 break
         if empty:
             empty_columns.append(idx)
+            
     
-    
-    for line in data:
-        added_columns = 0
-        for expand in empty_columns:
-            insert_at = expand + added_columns
-            added_columns += 1
-            line = line[:insert_at] + "." + line[insert_at:]
-        ret_val.append(line)
-    
-    return ret_val
+    return empty_columns
 
-def get_galaxies(data) -> list[tuple[int,int]]:
+def get_galaxies(data,inserted_rows, inserted_columns,run_type) -> list[tuple[int,int]]:
     galaxies = []
+    
+    if run_type == "A":
+        expansion = 1
+    else:
+        expansion = 999999
+
     for y , line in enumerate(data):
         for x, chr in enumerate(line):
             if chr == "#":
-                galaxies.append((x,y))
+                x1 = x + adjust_for_expansion(x,inserted_columns) * expansion
+                y1 = y + adjust_for_expansion(y,inserted_rows) * expansion
+                galaxies.append((x1,y1))
     return galaxies
+
+def adjust_for_expansion(galaxy_line, inserted_lines) -> int:
+    ret_val = 0
+    for line in inserted_lines:
+        if line < galaxy_line:
+            ret_val += 1
+        else:
+            break
+   
+    return ret_val
+    
 
 def calc_distance(galaxy_one, galaxy_two) -> int:
     return abs(galaxy_one[0] - galaxy_two[0]) + abs(galaxy_one[1] - galaxy_two[1])
