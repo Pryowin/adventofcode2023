@@ -33,14 +33,11 @@ def insert_columns(data) -> list[int]:
     
     return empty_columns
 
-def get_galaxies(data,inserted_rows, inserted_columns,run_type) -> list[tuple[int,int]]:
+def get_galaxies(data,inserted_rows: list[int], inserted_columns: list[int],run_type) -> list[tuple[int,int]]:
     galaxies = []
-    
-    if run_type == "A":
-        expansion = 1
-    else:
-        expansion = 999999
 
+    expansion = get_expansion(run_type)
+    
     for y , line in enumerate(data):
         for x, chr in enumerate(line):
             if chr == "#":
@@ -49,7 +46,7 @@ def get_galaxies(data,inserted_rows, inserted_columns,run_type) -> list[tuple[in
                 galaxies.append((x1,y1))
     return galaxies
 
-def adjust_for_expansion(galaxy_line, inserted_lines) -> int:
+def adjust_for_expansion(galaxy_line: int, inserted_lines: list[int]) -> int:
     ret_val = 0
     for line in inserted_lines:
         if line < galaxy_line:
@@ -58,12 +55,23 @@ def adjust_for_expansion(galaxy_line, inserted_lines) -> int:
             break
    
     return ret_val
+
+def get_expansion(run_type) -> int:
+    if run_type == "A":
+        expansion = 1
+    else:
+        if len(sys.argv) > 3:
+            expansion = int(sys.argv[3]) - 1
+        else:
+            expansion = 999_999
+    return expansion
+
     
 
-def calc_distance(galaxy_one, galaxy_two) -> int:
+def calc_distance(galaxy_one: tuple[int, int], galaxy_two: tuple[int, int]) -> int:
     return abs(galaxy_one[0] - galaxy_two[0]) + abs(galaxy_one[1] - galaxy_two[1])
 
-def sum_shortest_paths(galaxies) -> int:
+def sum_shortest_paths(galaxies: list[tuple[int,int]]) -> int:
     answer = 0
     for idx, galaxy in enumerate(galaxies):
         for pair_no in range(idx+1,len(galaxies)):
